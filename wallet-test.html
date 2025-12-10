@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Wallet Demo Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+      background: #05070b;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+    }
+    .page {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background: #05070b;
+    }
+    .header {
+      height: 48px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 16px;
+      font-weight: 500;
+      justify-content: center;
+    }
+    .main {
+      flex: 1;
+      padding: 16px;
+    }
+    .card {
+      border-radius: 12px;
+      background: #101b20;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-title {
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,0.75);
+    }
+    .card-value {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .card-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      background-image: linear-gradient(90deg, #00d1ff, #46EEAC);
+      color: #05070b;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    button.secondary {
+      background: transparent;
+      border: 1px solid #00d1ff;
+      color: #00d1ff;
+    }
+    .nav-links {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .nav-link {
+      border-radius: 10px;
+      background: #101b20;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 12px;
+      font-size: 13px;
+      text-decoration: none;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-link span {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+    .nav-link-arrow {
+      width: 8px;
+      height: 8px;
+      border-left: 2px solid rgba(255,255,255,0.8);
+      border-bottom: 2px solid rgba(255,255,255,0.8);
+      transform: rotate(225deg);
+    }
+    .footer-note {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      padding: 10px 16px 16px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      Wallet Demo Test
+    </header>
+    <main class="main">
+      <div class="card">
+        <div class="card-title">Current USDT Balance</div>
+        <div class="card-value" id="balanceVal">--</div>
+        <div class="card-sub">
+          Total income: <span id="totalIncomeVal">--</span><br/>
+          Team income: <span id="teamIncomeVal">--</span>
+        </div>
+        <div class="btn-row">
+          <button id="addIncomeBtn">+10 USDT (test income)</button>
+          <button class="secondary" id="resetBtn">Reset demo wallet</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Quick Navigation</div>
+        <div class="nav-links">
+          <a class="nav-link" href="deposit.html">
+            <div>Deposit<br/><span>Test deposit UI</span></div>
+            <div class="nav-link-arrow"></div>
+          </a>
+          <a class="nav-link" href="withdraw.html">
+            <div>Withdraw<br/><span>Test withdraw logic</span></div>
+            <div class="nav-link-arrow"></div>
+          </a>
+          <a class="nav-link" href="ai-power.html">
+            <div>AI Power<br/><span>Run tasks &amp; income</span></div>
+            <div class="nav-link-arrow"></div>
+          </a>
+          <a class="nav-link" href="member.html">
+            <div>Member Levels<br/><span>Check VIP status</span></div>
+            <div class="nav-link-arrow"></div>
+          </a>
+          <a class="nav-link" href="my-team.html">
+            <div>My Team<br/><span>View team info</span></div>
+            <div class="nav-link-arrow"></div>
+          </a>
+        </div>
+      </div>
+    </main>
+    <div class="footer-note">
+      Use this page to make sure the shared <code>DemoWallet</code> state updates correctly
+      when you use Deposit / AI Power / Withdraw and that all pages are connected.
+    </div>
+  </div>
+
+  <script src="wallet.js"></script>
+  <script>
+    (function () {
+      var balanceEl = document.getElementById("balanceVal");
+      var totalIncomeEl = document.getElementById("totalIncomeVal");
+      var teamIncomeEl = document.getElementById("teamIncomeVal");
+      var addIncomeBtn = document.getElementById("addIncomeBtn");
+      var resetBtn = document.getElementById("resetBtn");
+      var STORAGE_KEY = "demoWalletState_v1";
+
+      function refresh() {
+        if (!window.DemoWallet || typeof window.DemoWallet.getWallet !== "function") {
+          if (balanceEl) balanceEl.textContent = "DemoWallet not found";
+          if (totalIncomeEl) totalIncomeEl.textContent = "--";
+          if (teamIncomeEl) teamIncomeEl.textContent = "--";
+          return;
+        }
+        var w = window.DemoWallet.getWallet();
+        if (balanceEl) {
+          balanceEl.textContent = (w.balance || 0).toFixed(2) + " USDT";
+        }
+        if (totalIncomeEl) {
+          totalIncomeEl.textContent = (w.totalIncome || 0).toFixed(2) + " USDT";
+        }
+        if (teamIncomeEl) {
+          teamIncomeEl.textContent = (w.totalTeamIncome || 0).toFixed(2) + " USDT";
+        }
+      }
+
+      if (addIncomeBtn) {
+        addIncomeBtn.addEventListener("click", function () {
+          if (!window.DemoWallet || typeof window.DemoWallet.addIncome !== "function") {
+            alert("DemoWallet.addIncome is not available.");
+            return;
+          }
+          window.DemoWallet.addIncome(10);
+          refresh();
+          alert("Added 10 USDT of demo income to the wallet.");
+        });
+      }
+
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+          } catch (e) {}
+          // Forcing DemoWallet to re-init by calling getWallet()
+          if (window.DemoWallet && typeof window.DemoWallet.getWallet === "function") {
+            window.DemoWallet.getWallet();
+          }
+          refresh();
+          alert("Demo wallet state has been reset.");
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", refresh);
+      } else {
+        refresh();
+      }
+    })();
+  </script>
+</body>
+</html>
