@@ -966,7 +966,20 @@
 
       var sections = document.querySelectorAll(".vip-section");
       var balance = typeof info.balance === "number" ? info.balance : 0;
-      var effectiveUsers = typeof info.effectiveUsers === "number" ? info.effectiveUsers : 0;
+      var effectiveUsers = 0;
+      if (typeof info.effectiveUsers === "number") {
+        effectiveUsers = info.effectiveUsers;
+      }
+      if (window.DemoWallet && typeof window.DemoWallet.getTeamSummary === "function") {
+        try {
+          var team = window.DemoWallet.getTeamSummary();
+          if (team && team.members && team.members.length) {
+            effectiveUsers = team.members.filter(function (m) {
+              return m.level && m.level >= 1;
+            }).length;
+          }
+        } catch (e) {}
+      }
 
       sections.forEach(function (sec) {
         var level = sec.getAttribute("data-level");

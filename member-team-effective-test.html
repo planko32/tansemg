@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>اختبار الأعضاء الفعّالين - Member</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="wallet.js"></script>
+  <style>
+    body { background:#05070b; color:#fff; font-family:sans-serif; padding:16px; }
+    .box { background:#0d1720; padding:14px; border-radius:10px; margin-bottom:12px; }
+    pre { background:#020b15; padding:10px; border-radius:8px; font-size:12px; overflow:auto; }
+    a { color:#00e4c0; }
+    button { padding:8px 12px; border-radius:8px; border:none; cursor:pointer; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <h1>اختبار ربط My Team مع Member</h1>
+  <p>افتح أولاً صفحة <a href="team-add-members-test.html">team-add-members-test.html</a> وأضف أعضاء، ثم افتح هذه الصفحة لترى عدد الأعضاء الفعّالين كما تستخدمه صفحة Member.</p>
+
+  <div class="box">
+    <h3>VIP Info (من DemoWallet.getVipInfo)</h3>
+    <pre id="vipBox">...</pre>
+  </div>
+
+  <div class="box">
+    <h3>Team Summary (من DemoWallet.getTeamSummary)</h3>
+    <pre id="teamBox">...</pre>
+  </div>
+
+  <div class="box">
+    <h3>نتيجة الحساب التي تراها صفحة Member</h3>
+    <pre id="finalBox">...</pre>
+    <button onclick="recalc()">إعادة الحساب الآن</button>
+  </div>
+
+<script>
+function recalc() {
+  var vip = null;
+  var team = null;
+  var effective = 0;
+  var balance = 0;
+
+  try {
+    if (window.DemoWallet && typeof DemoWallet.getVipInfo === "function") {
+      vip = DemoWallet.getVipInfo();
+    }
+  } catch (e) {
+    vip = String(e);
+  }
+
+  try {
+    if (window.DemoWallet && typeof DemoWallet.getTeamSummary === "function") {
+      team = DemoWallet.getTeamSummary();
+      if (team && team.members && team.members.length) {
+        effective = team.members.filter(function (m) {
+          return m.level && m.level >= 1;
+        }).length;
+      }
+    }
+  } catch (e) {
+    team = String(e);
+  }
+
+  if (vip && typeof vip.balance === "number") {
+    balance = vip.balance;
+  } else if (window.DemoWallet && typeof DemoWallet.getWallet === "function") {
+    try {
+      var w = DemoWallet.getWallet();
+      if (w && typeof w.balance === "number") balance = w.balance;
+    } catch (e) {}
+  }
+
+  document.getElementById("vipBox").textContent = JSON.stringify(vip, null, 2);
+  document.getElementById("teamBox").textContent = JSON.stringify(team, null, 2);
+  document.getElementById("finalBox").textContent = JSON.stringify({
+    balance: balance,
+    effectiveUsers: effective
+  }, null, 2);
+}
+
+recalc();
+</script>
+</body>
+</html>
