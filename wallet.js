@@ -418,6 +418,14 @@ function getTransactions() {
 
     var balance = (typeof w.balance === "number" ? w.balance : 0);
 
+    // Sync demo stats to localStorage for pages that read demoBalance / demoEffectiveUsers
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("demoBalance", String(balance));
+        localStorage.setItem("demoEffectiveUsers", String(effectiveUsers));
+      }
+    } catch (e) {}
+
     var levels = [
       { name: "V1", minBalance: 50,    minUsers: 5,  minWithdraw: 20, maxWithdraw: 500  },
       { name: "V2", minBalance: 500,   minUsers: 5,  minWithdraw: 20, maxWithdraw: 1000 },
