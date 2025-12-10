@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Link Test - Wallet / VIP / Team</title>
+</head>
+<body style="font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background:#05070b; color:#fff; padding:16px;">
+  <h1>Demo Link Test</h1>
+  <p>هذه الصفحة فقط للاختبار بين <strong>my-assets</strong> و <strong>member</strong> و <strong>my-team</strong>.</p>
+
+  <p>
+    <a href="my-assets.html" style="color:#00e4c0;">اذهب إلى صفحة الأصول (Assets)</a>
+    &nbsp;|&nbsp;
+    <a href="member.html" style="color:#00e4c0;">اذهب إلى صفحة العضويات (Member)</a>
+    &nbsp;|&nbsp;
+    <a href="my-team.html" style="color:#00e4c0;">اذهب إلى صفحة الفريق (My Team)</a>
+  </p>
+
+  <hr style="margin:16px 0; border-color:#283341;" />
+
+  <h2>Snapshot</h2>
+  <pre id="snapshot" style="background:#0b2f3b; padding:12px; border-radius:8px; font-size:12px; overflow:auto;"></pre>
+
+  <script src="wallet.js"></script>
+  <script>
+    (function () {
+      var out = {
+        wallet: null,
+        vipInfo: null,
+        teamSummary: null
+      };
+
+      if (window.DemoWallet && typeof window.DemoWallet.getWallet === "function") {
+        try { out.wallet = window.DemoWallet.getWallet(); } catch (e) { out.wallet = String(e); }
+      } else {
+        out.wallet = "DemoWallet.getWallet غير متوفر";
+      }
+
+      if (window.DemoWallet && typeof window.DemoWallet.getVipInfo === "function") {
+        try { out.vipInfo = window.DemoWallet.getVipInfo(); } catch (e) { out.vipInfo = String(e); }
+      } else {
+        out.vipInfo = "DemoWallet.getVipInfo غير متوفر";
+      }
+
+      if (window.DemoWallet && typeof window.DemoWallet.getTeamSummary === "function") {
+        try { out.teamSummary = window.DemoWallet.getTeamSummary(); } catch (e) { out.teamSummary = String(e); }
+      } else {
+        out.teamSummary = "DemoWallet.getTeamSummary غير متوفر";
+      }
+
+      var pre = document.getElementById("snapshot");
+      pre.textContent = JSON.stringify(out, null, 2);
+    })();
+  </script>
+</body>
+</html>

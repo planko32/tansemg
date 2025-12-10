@@ -59,15 +59,7 @@ function addTransaction(tx) {
   return tx;
 }
 
-  
-  function syncDemoBalance(w) {
-    try {
-      if (!w || typeof w.balance !== "number") return;
-      localStorage.setItem("demoBalance", String(w.balance));
-    } catch (e) {}
-  }
-
-function ensure() {
+  function ensure() {
     var w = load();
     if (!w) {
       // First time ever: give 3 USDT demo balance
@@ -78,7 +70,6 @@ function ensure() {
         lastIncomeDate: todayStr()
       };
       save(w);
-      syncDemoBalance(w);
       return w;
     }
     var t = todayStr();
@@ -90,7 +81,6 @@ function ensure() {
     if (typeof w.balance !== "number") w.balance = 0;
     if (typeof w.totalIncome !== "number") w.totalIncome = 0;
     if (typeof w.todayIncome !== "number") w.todayIncome = 0;
-    syncDemoBalance(w);
     return w;
   }
 
@@ -117,7 +107,6 @@ function grantSignupBonusOnce() {
     w.todayIncome += bonus;
     localStorage.setItem(flagKey, "1");
     localStorage.setItem(STORAGE_KEY, JSON.stringify(w));
-    syncDemoBalance(w);
     addTransaction({
       type: "income",
       amount: bonus,
@@ -143,7 +132,6 @@ function grantSignupBonusOnce() {
     w.totalIncome += amount;
     w.todayIncome += amount;
     save(w);
-    syncDemoBalance(w);
     addTransaction({
       type: "income",
       amount: amount,
@@ -161,7 +149,6 @@ function grantSignupBonusOnce() {
     w.balance -= amount;
     if (w.balance < 0) w.balance = 0;
     save(w);
-    syncDemoBalance(w);
     addTransaction({
       type: "withdraw",
       amount: amount,
